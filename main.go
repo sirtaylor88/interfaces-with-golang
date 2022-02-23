@@ -14,6 +14,9 @@ type bot interface {
 	getGreeting() string
 }
 
+type logWriter struct {
+}
+
 func main() {
 	eb := englishBot{}
 	sb := spanishBot{}
@@ -33,7 +36,8 @@ func main() {
 	// resp.Body.Read(bs)
 	// fmt.Println(string(bs))
 
-	io.Copy(os.Stdout, resp.Body)
+	lw := logWriter{}
+	io.Copy(lw, resp.Body)
 
 }
 
@@ -47,4 +51,11 @@ func (sb spanishBot) getGreeting() string {
 
 func printGreeting(b bot) {
 	fmt.Println(b.getGreeting())
+}
+
+func (logWriter) Write(bs []byte) (int, error) {
+	fmt.Println(string(bs))
+	fmt.Println("Just wrote this many bytes:")
+
+	return len(bs), nil
 }
